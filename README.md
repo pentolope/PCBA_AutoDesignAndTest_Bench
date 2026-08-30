@@ -41,9 +41,14 @@ If you already have a shallow or non-recursive clone:
 git submodule update --init --recursive
 ```
 
-The full graph is large, because every board carries its own checkout of the
-toolkit and of the router. To read the briefs and the catalogue without any of
-that, clone without `--recursive` and take the boards one level deep:
+**That clone is about 3.2 GB and took 6.5 minutes when this repository was
+established** — every one of the thirty-two boards carries its own checkout of
+the toolkit and of the router, so the router's ~42 MB is paid thirty-two times.
+That is the price of each board resolving a pinned toolkit independently, and it
+is what makes a result attributable to a commit.
+
+To read the briefs and the catalogue without any of that, clone without
+`--recursive` and take the boards one level deep:
 
 ```bash
 git clone https://github.com/pentolope/PCBA_AutoDesignAndTest_Bench.git
@@ -53,9 +58,10 @@ git clone https://github.com/pentolope/PCBA_AutoDesignAndTest_Bench.git
 git submodule update --init
 ```
 
-That gives all thirty-two briefs, requirement splits and architecture worksheets
-and no toolkit copies — enough to read the suite, not enough to run it. Add
-`--recursive` to the second command when you need to run anything.
+That is **about 12 MB** — all thirty-two briefs, requirement splits and
+architecture worksheets, and no toolkit copies. Enough to read the suite; not
+enough to run it. Add `--recursive` to the second command when you need to run
+anything.
 
 Then prove the graph is what it claims to be:
 
@@ -72,6 +78,14 @@ check the graph alone when the boards are not checked out.
 ```bash
 python3 scripts/board_status.py
 ```
+
+A fresh recursive clone was checked when this repository was established: `git
+submodule status --recursive` reported 96 entries — 32 boards, 32 toolkits, 32
+routers — all clean, with no uninitialised or mismatched gitlink;
+`check_graph.py` confirmed all four levels with every board resolving toolkit
+`23939912677c` and router `dc2d365ca261`; and `run.py preflight`, run from
+inside a board in that clone, reported `READY`. The graph is not only present,
+it works from a clone with no manual setup.
 
 ## The 32 boards
 
