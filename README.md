@@ -74,10 +74,17 @@ that every board resolves one shared toolkit and router commit, that each
 board's catalogue entry agrees with `boards_index.json`, and that the brief
 digest each board recorded still describes its brief's bytes.
 
-Straight after a non-recursive clone, before any submodule is populated, use
-`--shallow`: it proves every declaration and every recorded gitlink without
-demanding content that has not been fetched. A missing `.gitmodules` entry, a
-wrong URL or an absent gitlink still fails.
+Straight after a non-recursive clone, before any submodule is populated,
+`--shallow` checks what is readable without fetched content: this repository's
+own 32 board declarations and the commit each gitlink records. A missing
+`.gitmodules` entry, a wrong URL or an absent gitlink still fails.
+
+It is **not** a check of the graph. Those 32 entries are one third of the 96 in
+the full graph, and nothing is asserted about the toolkit or router levels,
+which cannot be read at all until something is fetched. The command says so in
+its own output rather than reporting a bare success. Use it to catch a mangled
+catalogue early; use the plain invocation on a recursive clone to verify the
+graph.
 
 ```bash
 python3 scripts/check_graph.py --shallow
@@ -182,4 +189,6 @@ assuming it.
   regenerated from what is committed, and are ignored across the whole graph.
 - **No designs.** The thirty-two boards are scaffolded from their briefs and not
   yet designed. `scripts/board_status.py` says so per board, and reports a board
-  as designed only when a KiCad board file is actually present.
+  as designed only when a KiCad board file belonging to *that board* is present
+  — it stops at a nested repository boundary, so the toolkit's own test fixtures
+  are never mistaken for a design.

@@ -11,12 +11,30 @@ a KiCad board file is actually present in its checkout.
     python3 scripts/board_status.py --missing   # only boards not checked out
 """
 import argparse
-import glob
 import json
 import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def board_files(path):
+    """Every .kicad_pcb belonging to THIS board, and none belonging to another.
+
+    Recursive, because a board file in a subdirectory is still this board's.
+    Submodule-aware, because a naive recursive glob walks straight into
+    `tooling/PCBA_AutoDesignAndTest` and finds the toolkit's own test fixtures -
+    which would report all thirty-two undesigned boards as designed, the exact
+    fail-open in the opposite direction. A directory holding `.git` is another
+    repository's root; its contents are not this board's design.
+    """
+    found = []
+    for dirpath, dirnames, filenames in os.walk(path):
+        dirnames[:] = [d for d in dirnames
+                       if not os.path.exists(os.path.join(dirpath, d, ".git"))]
+        found += [os.path.join(dirpath, f)
+                  for f in filenames if f.endswith(".kicad_pcb")]
+    return found
 
 
 def board_state(entry):
@@ -40,11 +58,7 @@ def board_state(entry):
     if not os.path.isdir(path) or not os.listdir(path):
         return state
     state["checked_out"] = True
-    # Recursive on purpose: a board file in a subdirectory is still a board,
-    # and reporting "not designed" because of where it sits is a fail-open in
-    # exactly the direction this check exists to close.
-    state["designed"] = bool(
-        glob.glob(os.path.join(path, "**", "*.kicad_pcb"), recursive=True))
+    state["designed"] = bool(board_files(path))
     req_path = os.path.join(path, "board", "requirements.json")
     if os.path.isfile(req_path):
         try:

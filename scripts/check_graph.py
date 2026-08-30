@@ -188,9 +188,7 @@ def main():
             elif not opts.shallow:
                 fail(f"{label}: toolkit is not checked out, so its router "
                      f"submodule cannot be proved")
-            else:
-                notes.append("router pins not read: toolkit not checked out "
-                             "(--shallow)")
+
 
         if not opts.shallow:
             # the catalogue's brief path must resolve, in this checkout
@@ -234,6 +232,14 @@ def main():
         if len(failures) == before:
             ok_boards += 1
 
+    for name, commits, path in (("toolkit", toolkit_commits, TOOLKIT_PATH),
+                                ("KiCadRoutingTools", krt_commits, KRT_PATH)):
+        resolved = sum(len(r) for r in commits.values())
+        if 0 < resolved < len(index):
+            fail(f"{resolved}/{len(index)} boards resolve a {name} commit and "
+                 f"the rest could not be read. A partially resolved graph is "
+                 f"not a verified one: rerun without --shallow on a full "
+                 f"recursive clone, or fix the boards that failed.")
     if len(toolkit_commits) > 1:
         fail("boards resolve %d different toolkit commits; they must share one: "
              % len(toolkit_commits) +
@@ -246,7 +252,11 @@ def main():
                        for c, r in sorted(krt_commits.items())))
 
     print("bench -> board -> toolkit -> KiCadRoutingTools")
-    print(f"  boards fully checked   {ok_boards}/32")
+    if opts.shallow:
+        print(f"  board gitlinks checked {ok_boards}/{len(index)}  "
+              f"(--shallow: declarations and recorded commits only)")
+    else:
+        print(f"  boards fully checked   {ok_boards}/{len(index)}")
     for name, commits in (("toolkit", toolkit_commits),
                           ("KiCadRoutingTools", krt_commits)):
         if len(commits) == 1:
@@ -262,6 +272,19 @@ def main():
         for f in failures:
             print("  - " + f, file=sys.stderr)
         return 1
+    if opts.shallow:
+        unread = [n for n, c in (("toolkit", toolkit_commits),
+                                 ("KiCadRoutingTools", krt_commits)) if not c]
+        print("\nDeclarations and recorded gitlinks coherent. This is NOT a "
+              "check of the full graph:")
+        print(f"  {len(index)} of {len(index) * 3} submodule entries were "
+              f"examined - the umbrella's own board gitlinks.")
+        if unread:
+            print("  not read at all: " + ", ".join(unread) +
+                  " (nothing is asserted about them)")
+        print("  For the whole graph: git clone --recursive, then "
+              "check_graph.py with no flag.")
+        return 0
     print("\nGraph and catalogue coherent.")
     return 0
 
