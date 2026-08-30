@@ -58,9 +58,9 @@ the only reason `boards_index.json` can be kept unmodified and still have its
 
 ## Publishing discipline
 
-Before any push of cycle work, run `/claim-audit` on the drafted commit message
-and report, then `/accountability-review`. A benchmark's own claims about itself
-are held to the standard it holds its boards to.
+Before any push of cycle work, run `/accountability-review`. A benchmark's own
+claims about itself are held to the standard it holds its boards to, and that
+review binds every claim-bearing word to an artefact recomputed on the spot.
 
 ## Running
 

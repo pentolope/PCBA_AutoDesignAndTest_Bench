@@ -173,7 +173,7 @@ See [BENCHMARK.md](BENCHMARK.md) for the attempt protocol.
 | `scripts/check_graph.py` | proves the four-level graph and the catalogue's coherence |
 | `scripts/board_status.py` | what each board is and how far it has got |
 | `results/` | compact per-attempt results — metrics and verdicts, not build trees |
-| `.claude/skills/` | the claim-audit and accountability-review skills [CLAUDE.md](CLAUDE.md) requires before a push |
+| `.claude/skills/` | the accountability-review skill [CLAUDE.md](CLAUDE.md) requires before a push |
 
 `boards_index.json` is unmodified, which is why the `brief` path in every entry
 resolves inside this checkout: submodule directories are named `NN_RepoName` to
