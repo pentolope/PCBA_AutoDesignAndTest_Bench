@@ -1,0 +1,96 @@
+[submodule "boards/01_PCBA_StatusBeacon"]
+	path = boards/01_PCBA_StatusBeacon
+	url = https://github.com/pentolope/PCBA_StatusBeacon
+[submodule "boards/02_PCBA_I2C_EnvSensor"]
+	path = boards/02_PCBA_I2C_EnvSensor
+	url = https://github.com/pentolope/PCBA_I2C_EnvSensor
+[submodule "boards/03_PCBA_QuadRelayController"]
+	path = boards/03_PCBA_QuadRelayController
+	url = https://github.com/pentolope/PCBA_QuadRelayController
+[submodule "boards/04_PCBA_4Fan_Controller"]
+	path = boards/04_PCBA_4Fan_Controller
+	url = https://github.com/pentolope/PCBA_4Fan_Controller
+[submodule "boards/05_PCBA_USB_C_UART_Debugger"]
+	path = boards/05_PCBA_USB_C_UART_Debugger
+	url = https://github.com/pentolope/PCBA_USB_C_UART_Debugger
+[submodule "boards/06_PCBA_CAN_FD_Node"]
+	path = boards/06_PCBA_CAN_FD_Node
+	url = https://github.com/pentolope/PCBA_CAN_FD_Node
+[submodule "boards/07_PCBA_LiIon_PowerBank"]
+	path = boards/07_PCBA_LiIon_PowerBank
+	url = https://github.com/pentolope/PCBA_LiIon_PowerBank
+[submodule "boards/08_PCBA_StepperController"]
+	path = boards/08_PCBA_StepperController
+	url = https://github.com/pentolope/PCBA_StepperController
+[submodule "boards/09_PCBA_Precision_Thermocouple_DAQ"]
+	path = boards/09_PCBA_Precision_Thermocouple_DAQ
+	url = https://github.com/pentolope/PCBA_Precision_Thermocouple_DAQ
+[submodule "boards/10_PCBA_USB_Audio_Interface"]
+	path = boards/10_PCBA_USB_Audio_Interface
+	url = https://github.com/pentolope/PCBA_USB_Audio_Interface
+[submodule "boards/11_PCBA_4_20mA_IO"]
+	path = boards/11_PCBA_4_20mA_IO
+	url = https://github.com/pentolope/PCBA_4_20mA_IO
+[submodule "boards/12_PCBA_LoadCell_Instrument"]
+	path = boards/12_PCBA_LoadCell_Instrument
+	url = https://github.com/pentolope/PCBA_LoadCell_Instrument
+[submodule "boards/13_PCBA_RP2040_DevBoard"]
+	path = boards/13_PCBA_RP2040_DevBoard
+	url = https://github.com/pentolope/PCBA_RP2040_DevBoard
+[submodule "boards/14_PCBA_STM32_SDIO_Logger"]
+	path = boards/14_PCBA_STM32_SDIO_Logger
+	url = https://github.com/pentolope/PCBA_STM32_SDIO_Logger
+[submodule "boards/15_PCBA_Ethernet_RMII_Node"]
+	path = boards/15_PCBA_Ethernet_RMII_Node
+	url = https://github.com/pentolope/PCBA_Ethernet_RMII_Node
+[submodule "boards/16_PCBA_FPGA_PMOD_Bridge"]
+	path = boards/16_PCBA_FPGA_PMOD_Bridge
+	url = https://github.com/pentolope/PCBA_FPGA_PMOD_Bridge
+[submodule "boards/17_PCBA_5A_Synchronous_Buck"]
+	path = boards/17_PCBA_5A_Synchronous_Buck
+	url = https://github.com/pentolope/PCBA_5A_Synchronous_Buck
+[submodule "boards/18_PCBA_3Phase_BLDC_Controller"]
+	path = boards/18_PCBA_3Phase_BLDC_Controller
+	url = https://github.com/pentolope/PCBA_3Phase_BLDC_Controller
+[submodule "boards/19_PCBA_PoE_Powered_Node"]
+	path = boards/19_PCBA_PoE_Powered_Node
+	url = https://github.com/pentolope/PCBA_PoE_Powered_Node
+[submodule "boards/20_PCBA_Solar_MPPT_Controller"]
+	path = boards/20_PCBA_Solar_MPPT_Controller
+	url = https://github.com/pentolope/PCBA_Solar_MPPT_Controller
+[submodule "boards/21_PCBA_BLE_Sensor_Tag"]
+	path = boards/21_PCBA_BLE_Sensor_Tag
+	url = https://github.com/pentolope/PCBA_BLE_Sensor_Tag
+[submodule "boards/22_PCBA_GNSS_Receiver"]
+	path = boards/22_PCBA_GNSS_Receiver
+	url = https://github.com/pentolope/PCBA_GNSS_Receiver
+[submodule "boards/23_PCBA_SubGHz_Telemetry"]
+	path = boards/23_PCBA_SubGHz_Telemetry
+	url = https://github.com/pentolope/PCBA_SubGHz_Telemetry
+[submodule "boards/24_PCBA_SDR_IF_Sampler"]
+	path = boards/24_PCBA_SDR_IF_Sampler
+	url = https://github.com/pentolope/PCBA_SDR_IF_Sampler
+[submodule "boards/25_PCBA_USB3_Hub"]
+	path = boards/25_PCBA_USB3_Hub
+	url = https://github.com/pentolope/PCBA_USB3_Hub
+[submodule "boards/26_PCBA_Gigabit_Ethernet_Switch"]
+	path = boards/26_PCBA_Gigabit_Ethernet_Switch
+	url = https://github.com/pentolope/PCBA_Gigabit_Ethernet_Switch
+[submodule "boards/27_PCBA_HDMI_FPGA_Bridge"]
+	path = boards/27_PCBA_HDMI_FPGA_Bridge
+	url = https://github.com/pentolope/PCBA_HDMI_FPGA_Bridge
+[submodule "boards/28_PCBA_DDR3_FPGA_Controller"]
+	path = boards/28_PCBA_DDR3_FPGA_Controller
+	url = https://github.com/pentolope/PCBA_DDR3_FPGA_Controller
+[submodule "boards/29_PCBA_Camera_Serializer_Carrier"]
+	path = boards/29_PCBA_Camera_Serializer_Carrier
+	url = https://github.com/pentolope/PCBA_Camera_Serializer_Carrier
+[submodule "boards/30_PCBA_Motor_Encoder_Ring"]
+	path = boards/30_PCBA_Motor_Encoder_Ring
+	url = https://github.com/pentolope/PCBA_Motor_Encoder_Ring
+[submodule "boards/31_PCBA_Dense_MixedSignal_Instrument"]
+	path = boards/31_PCBA_Dense_MixedSignal_Instrument
+	url = https://github.com/pentolope/PCBA_Dense_MixedSignal_Instrument
+[submodule "boards/32_PCBA_CircularPDM_MicrophoneArray"]
+	path = boards/32_PCBA_CircularPDM_MicrophoneArray
+	url = https://github.com/pentolope/PCBA_CircularPDM_MicrophoneArray

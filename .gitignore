@@ -1,0 +1,23 @@
+# This repository holds a catalogue, a protocol, two scripts and compact
+# results. Nothing large is generated here - but the submodules underneath it
+# generate plenty, and a stray artefact committed at this level is paid for by
+# every clone of the whole graph.
+
+__pycache__/
+*.py[cod]
+
+# Toolkit run output, in case anything is ever run from this level.
+out/
+build/
+
+# Search, field-solver and fabrication scratch. None of it belongs here; these
+# lines exist so that an accident is ignored rather than committed.
+candidates/
+openems/
+*.h5
+*.vtk
+*.vtr
+*.vtu
+*.gbr
+*.drl
+*.log
