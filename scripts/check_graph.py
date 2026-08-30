@@ -87,8 +87,15 @@ def populated(path, markers):
     return all(os.path.exists(os.path.join(path, m)) for m in markers)
 
 
-def check_submodule(parent, sub_path, expect_url_suffix, markers, label):
-    """Declared, recorded, checked out, identifiable. Returns the commit."""
+def check_submodule(parent, sub_path, expect_url_suffix, markers, label,
+                    require_checkout=True):
+    """Declared, recorded, checked out, identifiable. Returns the commit.
+
+    With `require_checkout` false, the declaration and the recorded gitlink are
+    still proved -- that is what `--shallow` is for, and it is a real check: a
+    missing .gitmodules entry, a wrong URL or an absent gitlink all still fail.
+    What it does not do is demand content that a bare clone has not fetched.
+    """
     declared = declared_submodules(parent)
     if sub_path not in declared:
         fail(f"{label}: {sub_path} is not declared in .gitmodules")
@@ -103,6 +110,8 @@ def check_submodule(parent, sub_path, expect_url_suffix, markers, label):
         return None
     full = os.path.join(parent, sub_path)
     if not os.path.isdir(full) or not os.listdir(full):
+        if not require_checkout:
+            return rec
         fail(f"{label}: {sub_path} is not checked out "
              f"(run: git submodule update --init --recursive)")
         return None
@@ -152,23 +161,36 @@ def main():
         if sub not in board_subs:
             fail(f"{label}: no submodule declared at {sub}")
             continue
-        check_submodule(ROOT, sub, f"/{OWNER}/{repo}", ("BRIEF.md",), label)
+        deep = not opts.shallow
+        check_submodule(ROOT, sub, f"/{OWNER}/{repo}", ("BRIEF.md",),
+                        label, require_checkout=deep)
         board = os.path.join(ROOT, sub)
         if not os.path.isdir(board) or not os.listdir(board):
+            if opts.shallow:
+                ok_boards += 1 if len(failures) == before else 0
+                continue
             continue
 
         # level 3 and 4: the toolkit, and the router inside it
         tk = check_submodule(board, TOOLKIT_PATH,
                              f"/{OWNER}/PCBA_AutoDesignAndTest",
-                             TOOLKIT_MARKERS, label)
+                             TOOLKIT_MARKERS, label, require_checkout=deep)
         if tk:
             toolkit_commits.setdefault(tk, []).append(repo)
             toolkit = os.path.join(board, TOOLKIT_PATH)
-            krt = check_submodule(toolkit, KRT_PATH,
-                                  f"/{OWNER}/KiCadRoutingTools",
-                                  KRT_MARKERS, f"{label} -> toolkit")
-            if krt:
-                krt_commits.setdefault(krt, []).append(repo)
+            if os.path.isdir(toolkit) and os.listdir(toolkit):
+                krt = check_submodule(toolkit, KRT_PATH,
+                                      f"/{OWNER}/KiCadRoutingTools",
+                                      KRT_MARKERS, f"{label} -> toolkit",
+                                      require_checkout=deep)
+                if krt:
+                    krt_commits.setdefault(krt, []).append(repo)
+            elif not opts.shallow:
+                fail(f"{label}: toolkit is not checked out, so its router "
+                     f"submodule cannot be proved")
+            else:
+                notes.append("router pins not read: toolkit not checked out "
+                             "(--shallow)")
 
         if not opts.shallow:
             # the catalogue's brief path must resolve, in this checkout
@@ -232,7 +254,7 @@ def main():
             print(f"  {name:<22} {commit[:12]}  resolved by {len(repos)}/32 boards")
         elif not commits:
             print(f"  {name:<22} not resolved by any board")
-    for note in notes:
+    for note in sorted(set(notes)):
         print("  note: " + note)
 
     if failures:

@@ -58,6 +58,21 @@ rather than trusted.
 5. **Never submit an order.** A release is a candidate. Fabricator previews
    require human approval.
 
+## An empty gate matrix is not a passing one
+
+Every board ships `board/manifest.template.json`, the toolkit's documented
+minimum manifest. Run the validator against it today and it exits 0 and prints
+**ACCEPTED** — because every gate reports `NOT_APPLICABLE` for want of a policy
+block, and no gate reads `sources.pcb`, so the absent board file is never
+noticed.
+
+That is the toolkit working as designed: a gate whose policy is absent still
+appears in the matrix, *with a reason*. It is also the most available way to
+produce a green light that means nothing. **No attempt may cite a verdict line
+as a result.** A result cites the matrix — which gates ran, which were
+`NOT_APPLICABLE` and why — because that is the artefact that distinguishes a
+board that passed from a board that was never checked.
+
 ## Refusal is a valid outcome
 
 Some briefs — the DDR3 board says so explicitly — are hard enough that the

@@ -40,7 +40,11 @@ def board_state(entry):
     if not os.path.isdir(path) or not os.listdir(path):
         return state
     state["checked_out"] = True
-    state["designed"] = bool(glob.glob(os.path.join(path, "*.kicad_pcb")))
+    # Recursive on purpose: a board file in a subdirectory is still a board,
+    # and reporting "not designed" because of where it sits is a fail-open in
+    # exactly the direction this check exists to close.
+    state["designed"] = bool(
+        glob.glob(os.path.join(path, "**", "*.kicad_pcb"), recursive=True))
     req_path = os.path.join(path, "board", "requirements.json")
     if os.path.isfile(req_path):
         try:

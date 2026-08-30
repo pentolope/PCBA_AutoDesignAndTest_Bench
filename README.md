@@ -72,8 +72,16 @@ python3 scripts/check_graph.py
 It checks all four levels — declared, recorded, checked out and identifiable —
 that every board resolves one shared toolkit and router commit, that each
 board's catalogue entry agrees with `boards_index.json`, and that the brief
-digest each board recorded still describes its brief's bytes. Add `--shallow` to
-check the graph alone when the boards are not checked out.
+digest each board recorded still describes its brief's bytes.
+
+Straight after a non-recursive clone, before any submodule is populated, use
+`--shallow`: it proves every declaration and every recorded gitlink without
+demanding content that has not been fetched. A missing `.gitmodules` entry, a
+wrong URL or an absent gitlink still fails.
+
+```bash
+python3 scripts/check_graph.py --shallow
+```
 
 ```bash
 python3 scripts/board_status.py
@@ -158,6 +166,7 @@ See [BENCHMARK.md](BENCHMARK.md) for the attempt protocol.
 | `scripts/check_graph.py` | proves the four-level graph and the catalogue's coherence |
 | `scripts/board_status.py` | what each board is and how far it has got |
 | `results/` | compact per-attempt results — metrics and verdicts, not build trees |
+| `.claude/skills/` | the claim-audit and accountability-review skills [CLAUDE.md](CLAUDE.md) requires before a push |
 
 `boards_index.json` is unmodified, which is why the `brief` path in every entry
 resolves inside this checkout: submodule directories are named `NN_RepoName` to
