@@ -1,12 +1,7 @@
-# Text, LF everywhere. This repository holds documents, JSON and Python; a
-# checkout is byte-identical on every platform.
 *                    text=auto eol=lf
-
 *.md                 text eol=lf
 *.json               text eol=lf
 *.py                 text eol=lf
-
-# Nothing here should be binary. If something ever is, it is not normalised.
 *.png                binary
 *.pdf                binary
 *.zip                binary
