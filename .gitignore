@@ -11,3 +11,4 @@ openems/
 *.gbr
 *.drl
 *.log
+.idea/
