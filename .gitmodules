@@ -94,3 +94,6 @@
 [submodule "boards/32_PCBA_CircularPDM_MicrophoneArray"]
 	path = boards/32_PCBA_CircularPDM_MicrophoneArray
 	url = https://github.com/pentolope/PCBA_CircularPDM_MicrophoneArray
+[submodule "toolkit/PCBA_AutoDesignAndTest"]
+	path = toolkit/PCBA_AutoDesignAndTest
+	url = https://github.com/pentolope/PCBA_AutoDesignAndTest
