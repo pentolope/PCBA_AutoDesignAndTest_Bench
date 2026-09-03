@@ -12,11 +12,19 @@ committed artifacts at once. This turns the recovery into one command:
 
 Per board (independently; one failure does not stop the others):
 
-  check     run.py check-board       names what is stale and which input moved
+  check     run.py check-board       names what is stale and which input
+                                     moved; informational, never counted as
+                                     a failure, because staleness before the
+                                     rebuild is the situation this exists for
   build     run.py build             regenerate the fabrication outputs
   validate  run.py validate --write  record the verdict beside them
-  release   run.py release-check     expected to stay blocked until the user
-            commits; its output says exactly what remains
+  release   run.py release-check     a real verdict - run it as
+                                     `--steps release` after committing the
+                                     boards; before the commit it is blocked
+                                     by the dirty tree, by design
+
+The default steps are `build,validate`: the recovery itself. Exit zero means
+every requested verdict-bearing step passed on every board.
 
 The bench toolkit checkout must be clean: artifacts rebuilt under a dirty
 toolkit are recorded against code no commit names, which is exactly the
@@ -72,7 +80,7 @@ def main(argv):
     parser.add_argument("--boards", default="",
                         help="comma-separated selectors matched against the "
                              "board directory name (default: all)")
-    parser.add_argument("--steps", default="check,build,validate,release",
+    parser.add_argument("--steps", default="build,validate",
                         help="comma-separated subset of: " + ",".join(STEPS))
     parser.add_argument("--allow-dirty-toolkit", action="store_true",
                         help="proceed although the bench toolkit checkout is "
@@ -119,10 +127,15 @@ def main(argv):
                 "release": toolkit_cmd(root, manifest, "release-check"),
             }[step]
             proc = run(command, cwd=root, log=log)
-            if step == "check" and proc.returncode == 2 \
-                    and "check-board" not in (proc.stdout + proc.stderr):
-                # This board's toolkit predates check-board.
-                results[name][step] = "n/a"
+            if step == "check":
+                if proc.returncode == 2 \
+                        and "check-board" not in (proc.stdout + proc.stderr):
+                    results[name][step] = "n/a"     # toolkit predates it
+                elif proc.returncode == 0:
+                    results[name][step] = "ok"
+                else:
+                    findings = proc.stdout.count("\n  ")
+                    results[name][step] = "stale({})".format(findings or "?")
                 continue
             results[name][step] = "ok" if proc.returncode == 0 \
                 else "exit {}".format(proc.returncode)
@@ -133,7 +146,8 @@ def main(argv):
         print("{:36s} {}".format(name, line))
 
     failed = [name for name, steps_run in results.items()
-              if any(v not in ("ok", "n/a", "-") for v in steps_run.values())]
+              if any(v not in ("ok", "n/a", "-") and not v.startswith("stale")
+                     for v in steps_run.values())]
     if failed:
         print("\n{} board(s) need attention: {}".format(
             len(failed), ", ".join(failed)))
