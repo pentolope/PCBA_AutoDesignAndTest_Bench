@@ -71,11 +71,12 @@ def boards(selector):
 
 
 def classify_check(proc):
-    """One word for a check-board run; only a crash counts as failure.
+    """One word for a check-board run; only staleness is informational.
 
     Findings before a rebuild are the situation the recovery exists for, so
     they are informational - but a check that DIED (no display, a refusal, a
-    traceback) said nothing about staleness and must not be dressed as it.
+    traceback) said nothing about staleness and must not be dressed as it,
+    and a board on which nothing ran must never read as passing.
     """
     if proc.returncode == 0:
         return "ok"
@@ -89,7 +90,14 @@ def classify_check(proc):
         if changed:
             return "stale(design)"
         return "stale"
+    if "BOARD CHECK REFUSED" in proc.stdout:
+        return "refused"
+    # Only a POSITIVE old-toolkit signal is n/a: the usage banner of a
+    # toolkit that predates check-board names the package but not the
+    # command. A missing interpreter target or any other exit-2 is a
+    # failure - "can't open file" is not an old toolkit, it is no toolkit.
     if proc.returncode == 2 \
+            and "pcbqa" in (proc.stdout + proc.stderr) \
             and "check-board" not in (proc.stdout + proc.stderr):
         return "n/a"                      # this toolkit predates check-board
     return "exit {}".format(proc.returncode)
@@ -115,6 +123,10 @@ def main(argv):
     args = parser.parse_args(argv)
 
     requested = {s for s in args.steps.split(",") if s}
+    if not requested:
+        print("no steps requested; running nothing is not \"every step "
+              "passed\"")
+        return 2
     unknown = sorted(requested - set(STEPS))
     if unknown:
         print("unknown step(s): {}".format(unknown))
@@ -141,12 +153,36 @@ def main(argv):
         print("no board with a board/manifest.json matches")
         return 2
     logdir = tempfile.mkdtemp(prefix="bench_revalidate_")
+    head = run(["git", "-C", BENCH_TOOLKIT, "rev-parse", "--short", "HEAD"])
+    # Under --allow-dirty-toolkit the running code is NOT that commit, and
+    # a header claiming it is would be false exactly where identity matters.
+    dirty = "+dirty (uncommitted changes; results are bound to code no " \
+            "commit names)" if status.stdout.strip() else ""
+    print("toolkit: {} @ {}{}".format(os.path.realpath(BENCH_TOOLKIT),
+                                      head.stdout.strip() or "?", dirty))
     print("logs: {}\n".format(logdir))
 
     results = {}
     for name, root, manifest in chosen:
         results[name] = {}
         log = os.path.join(logdir, name + ".log")
+        # What actually runs is whatever the board's tooling path resolves
+        # to. A missing toolkit is a failure, not a pass-by-absence; a
+        # DIFFERENT toolkit would bind artifacts to code this bench never
+        # verified, so it is refused by name.
+        board_toolkit = os.path.join(root, TOOLKIT_REL)
+        if not os.path.isfile(os.path.join(board_toolkit, "run.py")):
+            results[name] = {step: "missing-toolkit" for step in steps}
+            print("{:36s} {}".format(name, "  ".join(
+                "{}:missing-toolkit".format(s) for s in steps)))
+            continue
+        if os.path.realpath(board_toolkit) != os.path.realpath(BENCH_TOOLKIT):
+            results[name] = {step: "foreign-toolkit" for step in steps}
+            print("{:36s} {}  ({} resolves to {})".format(
+                name, "  ".join("{}:foreign-toolkit".format(s)
+                                for s in steps),
+                TOOLKIT_REL, os.path.realpath(board_toolkit)))
+            continue
         for step in steps:
             command = {
                 "check": toolkit_cmd(root, manifest, "check-board"),
@@ -168,7 +204,8 @@ def main(argv):
         print("{:36s} {}".format(name, line))
 
     failed = [name for name, steps_run in results.items()
-              if any(v not in ("ok", "n/a", "-") and not v.startswith("stale")
+              if not steps_run
+              or any(v not in ("ok", "n/a", "-") and not v.startswith("stale")
                      for v in steps_run.values())]
     if failed:
         print("\n{} board(s) need attention: {}".format(
