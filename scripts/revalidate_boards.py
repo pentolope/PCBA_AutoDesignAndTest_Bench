@@ -37,6 +37,7 @@ from __future__ import annotations
 import argparse
 import glob
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -67,6 +68,31 @@ def boards(selector):
             continue
         found.append((name, root, manifest))
     return found
+
+
+def classify_check(proc):
+    """One word for a check-board run; only a crash counts as failure.
+
+    Findings before a rebuild are the situation the recovery exists for, so
+    they are informational - but a check that DIED (no display, a refusal, a
+    traceback) said nothing about staleness and must not be dressed as it.
+    """
+    if proc.returncode == 0:
+        return "ok"
+    if "BOARD CHECK FAILED" in proc.stdout:
+        changed = set()
+        for hit in re.findall(r"changed: ([^;\n]+)", proc.stdout):
+            changed.update(part.strip() for part in hit.split(","))
+        changed -= {""}
+        if changed and changed <= {"<toolkit>", "<configuration>"}:
+            return "stale(toolkit)"
+        if changed:
+            return "stale(design)"
+        return "stale"
+    if proc.returncode == 2 \
+            and "check-board" not in (proc.stdout + proc.stderr):
+        return "n/a"                      # this toolkit predates check-board
+    return "exit {}".format(proc.returncode)
 
 
 def toolkit_cmd(root, manifest, *args):
@@ -131,14 +157,7 @@ def main(argv):
             }[step]
             proc = run(command, cwd=root, log=log)
             if step == "check":
-                if proc.returncode == 2 \
-                        and "check-board" not in (proc.stdout + proc.stderr):
-                    results[name][step] = "n/a"     # toolkit predates it
-                elif proc.returncode == 0:
-                    results[name][step] = "ok"
-                else:
-                    findings = proc.stdout.count("\n  ")
-                    results[name][step] = "stale({})".format(findings or "?")
+                results[name][step] = classify_check(proc)
                 continue
             results[name][step] = "ok" if proc.returncode == 0 \
                 else "exit {}".format(proc.returncode)
