@@ -88,11 +88,14 @@ def main(argv):
                              "code; development only)")
     args = parser.parse_args(argv)
 
-    steps = [s for s in args.steps.split(",") if s]
-    unknown = sorted(set(steps) - set(STEPS))
+    requested = {s for s in args.steps.split(",") if s}
+    unknown = sorted(requested - set(STEPS))
     if unknown:
         print("unknown step(s): {}".format(unknown))
         return 2
+    # Canonical order regardless of how they were typed: a verdict recorded
+    # before the build that replaces its artifacts would be about nothing.
+    steps = [s for s in STEPS if s in requested]
     selector = [s for s in args.boards.split(",") if s]
 
     status = run(["git", "-C", BENCH_TOOLKIT, "status", "--porcelain"])
