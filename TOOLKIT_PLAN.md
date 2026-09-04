@@ -276,6 +276,28 @@ re-judged and ADOPTED, then a fresh search->accept->adopt in one run -
 and its `route --check` prints OK with the complete plan proven. The
 remaining boards re-record at their next owned route.
 
+*Review round 3, 2026-09-04*: the third review probed the durability and
+enforcement corners. All closed: the adoption journal is published
+atomically by rename, the previous record is backed up, each promotion
+rename is fsync-ordered durable before the next, and recovery decides
+over BOTH files' states - the reordered-rename pairing (new record,
+original board) is withdrawn or restored from backup, and a torn or
+unknown-format journal refuses loudly. Records bind every design input
+by its OWN digest plus the manifest with `routing.transforms` removed;
+`route --check` and ROUTE.PROVENANCE re-verify every bound input except
+the board adoption replaced, so a project/rule/schematic/library edited
+after adoption is a divergence and a release FAIL. Replay first proves
+the recorded plan against its own bound digest, then requires digest
+equality for the manifest-outside-transforms and for every non-board
+input. The search snapshots board+project+rule file at start, stages
+every attempt from the snapshots, and brackets each judgment with
+closure hashes - a tree input that moves mid-search refuses by name.
+Summary reconciliation reads all four failure channels (`failed`,
+`failed_single`, `open_single`, pad tallies) both ways. Board 02
+re-recorded under the new binding; boards 04-08's placement-writer
+helpers went through `pcbqa.board.save` (1.6's letter), each pinned by a
+board test.
+
 ### 1.4 Upstream KRT fixes — CLOSED as permanent wrapper features (03·5a, 07·6, 06·A1)
 
 Re-scoped 2026-09-04 by decision: the pin stays at `3fb9c05f` and the wrapper
