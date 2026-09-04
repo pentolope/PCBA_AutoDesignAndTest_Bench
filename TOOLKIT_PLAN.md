@@ -239,6 +239,20 @@ release will reject.
 *Done when* a board gets an accepted, recorded routing run without owning a
 loop, and no board-owned code knows `fab_tiers.py` exists.
 
+*Review round 2026-09-04*: an external review found eight fail-open or
+non-transactional holes in the first implementation; all are closed and
+each closure is a regression test. Two semantics were settled against the
+letter of this section: the grid step is DECLARED and mechanically
+validated against the measured finest pad pitch (refusal at grid >
+pitch/2) rather than auto-derived - a derived router input would make the
+declaration unreproducible - and "refuses two identical attempts" now
+also covers repeats across the budget (attempts above the distinct
+matrix refuse; the labeled-repeat channel is gone, and boards 04-07
+dropped their attempts from 9 to their 3 distinct rows). `route --check`
+reports UNPROVEN for fields a legacy record does not state: boards 01/02
+never recorded reserved_nets, and no legacy record binds the full plan -
+the first owned `run.py route` on each board re-records it.
+
 ### 1.4 Upstream KRT fixes — CLOSED as permanent wrapper features (03·5a, 07·6, 06·A1)
 
 Re-scoped 2026-09-04 by decision: the pin stays at `3fb9c05f` and the wrapper
