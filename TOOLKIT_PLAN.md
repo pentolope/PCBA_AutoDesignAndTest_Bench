@@ -239,15 +239,27 @@ release will reject.
 *Done when* a board gets an accepted, recorded routing run without owning a
 loop, and no board-owned code knows `fab_tiers.py` exists.
 
-### 1.4 Upstream KRT fixes (separate lane) — M (03·5a, 07·6, 06·A1)
+### 1.4 Upstream KRT fixes — CLOSED as permanent wrapper features (03·5a, 07·6, 06·A1)
 
-Real fixes belong on `pcba-autonomy`, with the pin moved deliberately: honour
-or at least report `--clearance`; apply `--same-net-pad-clearance` in
-plane-finalize taps; apply the fab floor to emitted fragments, not only
-checked ones; make protect-authored-copper an explicit interface rather than a
-lock-flag side effect. Until each lands, 1.3's wrapper defends the boundary.
+Re-scoped 2026-09-04 by decision: the pin stays at `3fb9c05f` and the wrapper
+owns the boundary permanently. A four-way audit of `3fb9c05f..e239e067`
+(99 upstream commits) found every complaint code path byte-identical and,
+more importantly, found that most of the asks are upstream *design*, not
+gaps: `--clearance` is a documented ceiling with the project Default netclass
+as the real channel (the "workaround" is the supported mechanism, and
+`min_clearance_used` in the JSON summary already reports the applied figure);
+KRT has no minimum-segment concept at all (0.025 mm fragments are the rescue
+grid's signature); `--same-net-pad-clearance` demonstrably reaches the
+finalize taps when passed explicitly (the hazard is the unset flag's
+fail-open project auto-read); and lock-flag protection is documented, per
+net, with no override. So 1.3's defenses are the deliverable, not a
+stopgap: project patch + validated fab floor + `min_clearance_used` refusal,
+the fold pass, the flag required in the declaration, and lock + per-item
+verification. One genuine upstream hole remains worth filing someday
+(custom/polygon same-net pads under-blocked on the search side); nothing in
+this program waits on it.
 
-*Done when* the wrapper's defenses become assertions that never fire.
+*Done*: shipped inside 1.3; the wrapper's refusals are the assertions.
 
 ### 1.5 Placement and pour support — M (01·7, 04·A7, 06·B1, 06·B3, 03·5c, 08·11)
 
