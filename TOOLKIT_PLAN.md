@@ -253,6 +253,29 @@ reports UNPROVEN for fields a legacy record does not state: boards 01/02
 never recorded reserved_nets, and no legacy record binds the full plan -
 the first owned `run.py route` on each board re-records it.
 
+*Review round 2, 2026-09-04*: the re-review demanded enforcement, not just
+recording, and a real consumer. Both delivered: records bind the plan,
+manifest/project/rule-file and staged design inputs by digest, and
+ADOPTION replays the comparison - a candidate judged under rules the tree
+no longer holds refuses. Adoption is a journaled two-file transaction
+recovered deterministically after any crash. Replay is restricted to
+transform-only declaration changes and verifies every recorded byte it
+reuses (summaries included). Normalization runs through `board.Session`'s
+resumable phases in production. The escaped-net-name splice hole is
+closed. Acceptance on 04-08 now names the design gate class, placement
+courtyard blocks are declared on all eight (edge clearance only on 01/03,
+whose designs can truthfully promise a margin - the rest place edge-flush
+connectors or near-edge mounting holes by design and report
+NOT_APPLICABLE with that reason), preflight expands class tokens, and
+every `design/route.py` is deleted - board 03's placement-margin helpers
+moved to `place.py`, its angle census to `rules.py`, and no board-side
+code reads a raw endpoint. Board 02 completed the full owned cycle
+against the real pinned router - search (3 attempts refused honestly on
+ROUTE.TINY_SEGMENTS), transforms widened by declaration, replay
+re-judged and ADOPTED, then a fresh search->accept->adopt in one run -
+and its `route --check` prints OK with the complete plan proven. The
+remaining boards re-record at their next owned route.
+
 ### 1.4 Upstream KRT fixes — CLOSED as permanent wrapper features (03·5a, 07·6, 06·A1)
 
 Re-scoped 2026-09-04 by decision: the pin stays at `3fb9c05f` and the wrapper
