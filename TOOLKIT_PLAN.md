@@ -298,6 +298,27 @@ re-recorded under the new binding; boards 04-08's placement-writer
 helpers went through `pcbqa.board.save` (1.6's letter), each pinned by a
 board test.
 
+*Review round 4, 2026-09-04*: the fourth review found the policy-read
+races and format gaps behind the round-3 defenses. All closed: the
+acceptance worker verifies the manifest bytes IT parses against the
+binding's digest (a swap-and-restore entirely inside the old bracket
+window is caught at the read site), and every staged design the
+normalization, DRC and gates open is verified as staged COPIES against
+the per-input digests - the reviewer's reproduction (min_segment_mm
+swapped during the acceptance) now refuses by name. Reconciliation
+reads the shape `--json-out` actually writes (`pad_pairs_open` as a
+LIST, multipoint total/connected tallies) as well as the compact
+shape, counts `failed_single` names as claimed trouble, and the fake
+test router now emits the real shape - a nonempty pad_pairs_open list
+runs the full loop as a recorded misreport instead of an
+AttributeError. `route --check` and ROUTE.PROVENANCE enforce the
+recorded manifest digest (the manifest is not a design input, and the
+plan does not carry every acceptance rule - a constraint-floor track
+width proved it), and the release gate re-proves the recorded plan.
+Replay copies its verified summary and transcripts into its own
+attempt directories and re-binds them, so a replay's record can
+itself be replayed.
+
 ### 1.4 Upstream KRT fixes — CLOSED as permanent wrapper features (03·5a, 07·6, 06·A1)
 
 Re-scoped 2026-09-04 by decision: the pin stays at `3fb9c05f` and the wrapper
