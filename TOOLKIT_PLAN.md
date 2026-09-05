@@ -330,6 +330,20 @@ bytes. The reviewer's swap-and-restore is an end-to-end regression,
 alongside the honest baseline (a project missing its declared floors
 refuses in acceptance exactly as it would at release).
 
+*Review round 6, 2026-09-04*: one blocker - the binding covered the
+native KiCad closure but not the AUXILIARY files acceptance gates
+read: the physical-stackup supplement and contract documentation (and
+by the same logic simulation/timing records) could change after
+acceptance with adoption, `--check` and provenance all green. Gates
+now read auxiliary inputs through recording context helpers (digest
+of the exact bytes parsed; documentation globs also record matched
+membership), evidence files inside the project root join the ledger,
+the ledger must be byte-stable across attempts, and the record binds
+it as acceptance_inputs/acceptance_globs - enforced at adoption,
+`route --check`, ROUTE.PROVENANCE and replay. Both reviewer
+reproductions (edited supplement; changed glob membership) are
+regressions, and board 02 re-recorded under the extended binding.
+
 ### 1.4 Upstream KRT fixes — CLOSED as permanent wrapper features (03·5a, 07·6, 06·A1)
 
 Re-scoped 2026-09-04 by decision: the pin stays at `3fb9c05f` and the wrapper
