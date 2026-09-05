@@ -319,6 +319,17 @@ Replay copies its verified summary and transcripts into its own
 attempt directories and re-binds them, so a replay's record can
 itself be replayed.
 
+*Review round 5, 2026-09-04*: one blocker - gates that read the
+project DIRECTLY (DRC.CONSTRAINT_FLOOR, DRC.NO_SUPPRESSED_RULES) used
+the live pathname, outside the verified staging; a floor rule supplied
+only for the duration of the gate's read let acceptance pass a
+candidate release rejects. With expectations declared, the context's
+design-input accessors now serve the verified staged copies, so every
+acceptance reader - staged tool or direct gate - parses recorded
+bytes. The reviewer's swap-and-restore is an end-to-end regression,
+alongside the honest baseline (a project missing its declared floors
+refuses in acceptance exactly as it would at release).
+
 ### 1.4 Upstream KRT fixes — CLOSED as permanent wrapper features (03·5a, 07·6, 06·A1)
 
 Re-scoped 2026-09-04 by decision: the pin stays at `3fb9c05f` and the wrapper
