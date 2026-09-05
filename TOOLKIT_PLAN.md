@@ -396,6 +396,33 @@ Six boards asked for pieces of one subsystem: requirements → claims → policy
 release verdict. Design the schema change once, not as four bolt-ons. This is
 what makes RELEASE READY mean what it says.
 
+*Implemented 2026-09-05* as one schema: `pcbqa/evidence.py` (register,
+claim documents, policy classification), `pcbqa/device_parameters.py`,
+`pcbqa/policy.py` (the §30 policy state every verdict now carries), eight
+gates in `gates/g_evidence.py`, `run.py regenerate` and `run.py claims`,
+and the shared `sim/assemble.py` registry entry point. `release-check`
+refuses `requires-additional-evidence` (silence on an implemented domain
+is no longer READY) and permits `fabrication-ready` with the open items
+printed into the verdict. All "Done when" clauses hold on the bench:
+board 06's 67 requirements name kind:origin (zero bare `BRIEF.md`
+sources), board 04's mating UNKNOWN prints as `awaiting PHYSICAL_TEST`
+in its release verdict, board 02's claims are gate-visible with the OPEN
+set moved from a test constant into manifest policy, board 01's dropout
+extrapolation is a knowledge-levelled device parameter visible in its
+verdict, and a swapped datasheet fails PROV.EVIDENCE_INTEGRITY (which
+also caught a real stale citation on board 08 and a phantom
+"design-source" document on board 02 in its first live runs; the
+scenario-requirement join caught board 07's simulation-only requirement
+the day it was wired). One semantics settled against the letter of 2.3:
+boards register claim GENERATORS rather than in-process evaluator
+callbacks - the committed document is judged by CLAIM.MATRIX and proven
+generator-fresh by PROV.DERIVED_DOCUMENTS, which gives test/gate
+agreement by construction without the toolkit importing consumer code.
+Routing records list manifest-declared derived documents as
+consumed-but-derived instead of digest-binding them (a claims document
+derives from the routed board, so adoption regenerates it; found on
+board 02's first owned route under the new gates).
+
 ### 2.1 Requirement records: kind, methods, and the enforced join — M (03·7, 06·E1, 04·B7, 05·4)
 
 First-class `kind` (§4: user / derived / assumption / design decision, with
