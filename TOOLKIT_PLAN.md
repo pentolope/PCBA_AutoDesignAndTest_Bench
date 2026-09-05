@@ -418,10 +418,13 @@ boards register claim GENERATORS rather than in-process evaluator
 callbacks - the committed document is judged by CLAIM.MATRIX and proven
 generator-fresh by PROV.DERIVED_DOCUMENTS, which gives test/gate
 agreement by construction without the toolkit importing consumer code.
-Routing records list manifest-declared derived documents as
-consumed-but-derived instead of digest-binding them (a claims document
-derives from the routed board, so adoption regenerates it; found on
-board 02's first owned route under the new gates).
+Routing records bind manifest-declared derived documents like every
+other acceptance input and additionally list them as derived; drift is
+excused only when the current bytes are exactly what the declared
+generator produces from a hidden-target stage of the tracked tree -
+the shape three adversarial review rounds converged on after the
+first cut (exclusion from the binding) was shown to reopen the
+round-6 guarantee.
 
 ### 2.1 Requirement records: kind, methods, and the enforced join — M (03·7, 06·E1, 04·B7, 05·4)
 
